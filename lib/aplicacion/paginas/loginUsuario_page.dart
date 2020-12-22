@@ -3,10 +3,13 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:sulogistica/aplicacion/provider/providerUsuario_prrovider.dart';
 import 'package:sulogistica/aplicacion/widgets/crearListas_widget.dart';
 import 'package:sulogistica/aplicacion/widgets/recuperContrasena_widget.dart';
 import 'package:sulogistica/arquitectura/serviciosLogin_services.dart';
 import 'package:sulogistica/dominio/modeloEmpresas_model.dart';
+import 'package:sulogistica/preferenciasdeusario.dart';
 
 //contiene la pagina de login
 class LoginPagina extends StatefulWidget {
@@ -20,9 +23,12 @@ class _LoginPageState extends State<LoginPagina> {
   TextEditingController codigoController = new TextEditingController();
   TextEditingController contraController = new TextEditingController();
 
+
+
   @override
   @override
   Widget build(BuildContext context) {
+    
     final size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
@@ -53,6 +59,8 @@ class _LoginPageState extends State<LoginPagina> {
 
   // widget  que pinta los formularios
   Widget _formulario(BuildContext context) {
+    final userInfo = Provider.of<InformacionUsuario>(context);
+
     final size = MediaQuery.of(context).size;
     return ListView(
         shrinkWrap: true,
@@ -69,47 +77,41 @@ class _LoginPageState extends State<LoginPagina> {
                 decoration: InputDecoration(
                     labelText: 'Código',
                     labelStyle: new TextStyle(color: const Color(0xFF0A2140))),
-                controller:null,
+                controller:codigoController,
                 onEditingComplete: _submitCodigo,
               ),
+              CrearListas(
+              lista: userInfo.empresasValores,
+              texto: 'Empresa',
+              model: Company,
+            ),
             ],
           ),
-          Container(
-  margin: EdgeInsets.all(8.0),
-  // hack textfield height
-  padding: EdgeInsets.only(bottom: 40.0),
-  child: TextField(
-    maxLines: 10,
-    decoration: InputDecoration(
-        hintText: "Comment!",
-        border: OutlineInputBorder(),
-    ),
-  ),
-),
+         
 
-          // MyCustomTitle(
-          //   icono: FontAwesomeIcons.mapMarkerAlt,
-          //   titulo: 'ubicación actual',
-          // ),
+          MyCustomTitle(
+            icono: FontAwesomeIcons.mapMarkerAlt,
+            titulo: 'ubicación actual',
+          ),
 
-          // MyCustomCard(widgets: <Widget>[
-          //   CrearListas(
-          //     lista: [],
-          //     texto: 'Ciudad',
-          //   ),
-          //   CrearListas(
-          //     lista: [],
-          //     texto: 'Oficina',
-          //   ),
-          //   CrearListas(
-          //     lista: [],
-          //     texto: 'Sección',
-          //   ),
-          // ]),
-          // MyCustomTitle(
-          //   titulo: 'Verificación',
-          //   icono: FontAwesomeIcons.key,
-          // ),
+          MyCustomCard(widgets: <Widget>[
+            CrearListas(
+              lista: userInfo.listaCiudades,
+              texto: 'Ciudad',
+            ),
+            CrearListas(
+              lista: [],
+              texto: 'Oficina',
+            ),
+            CrearListas(
+              lista: [],
+              texto: 'Sección',
+            ),
+          ]),
+          MyCustomTitle(
+            titulo: 'Verificación',
+            icono: FontAwesomeIcons.key,
+          ),
           MyCustomCard(
             widgets: <Widget>[
               TextField(
@@ -175,20 +177,17 @@ class _LoginPageState extends State<LoginPagina> {
         ]);
   }
   _submitCodigo (){
+  final userInfo = Provider.of<InformacionUsuario>(context);
+   final prefs =  PreferenciasUsuario();
+  List<Company>_resultado = [];
    final buscarUsuario = ServiciosLogin();
-    return FutureBuilder(
-        future:  buscarUsuario.buscarrUsuario(codigoController.text),
-        builder: (BuildContext context,
-            AsyncSnapshot<List<ListaEmpresas>> snapshot) {
-          if (snapshot.hasData) {
-            final productos = snapshot.data;
-
-            return   CrearListas(lista:productos,texto: 'Empresa');
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        });
-
+   buscarUsuario.buscarrUsuario(codigoController.text, 'buscarUsuario');
+   var cont = 0;
+   for (var item in prefs.empresasValores ) {
+    _resultado.add(Company(item,prefs.empresasIndices[cont]));
+    cont ++;
+  }
+  userInfo.empresasValores=_resultado;
 }
 }
 

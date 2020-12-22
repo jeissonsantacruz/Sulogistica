@@ -1,54 +1,71 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sulogistica/aplicacion/provider/providerUsuario_prrovider.dart';
+import 'package:sulogistica/arquitectura/serviciosLogin_services.dart';
 import 'package:sulogistica/dominio/modeloEmpresas_model.dart';
+import 'package:sulogistica/dominio/modeloOficinas_model.dart';
+import 'package:sulogistica/dominio/modeloSecciones_model.dart';
+
+import 'package:sulogistica/dominio/modeloCiudades_model.dart';
+import '../../preferenciasdeusario.dart';
  
 class CrearListas extends StatefulWidget {
-  final List<ListaEmpresas> lista;
+  final List lista;
   final String texto;
-  CrearListas({this.lista,this.texto}) : super();
+  final  model;
+  CrearListas({this.lista,this.texto,this.model}) : super();
  
   @override
-  CrearListasState createState() => CrearListasState(lista:lista,texto:texto);
+  CrearListasState createState() => CrearListasState(lista:lista,texto:texto,model:model);
 }
  
  
+
+
 class CrearListasState extends State<CrearListas> {
 
-  final List<ListaEmpresas>  lista;
+  final List lista;
   final String texto;
-  CrearListasState({this.lista,this.texto});
-  //
-
-  List<DropdownMenuItem<ListaEmpresas>> _dropdownMenuItems;
-  ListaEmpresas _selectedCompany;
- 
-  @override
-  void initState() {
-    _dropdownMenuItems = buildDropdownMenuItems(lista);
+  final model;
+  CrearListasState({this.lista,this.texto,this.model});
   
-    super.initState();
-  }
+
+  List<DropdownMenuItem<Company>> _dropdownMenuItems;
+  Company _selectedCompany;
+  
  
-  List<DropdownMenuItem<ListaEmpresas>> buildDropdownMenuItems(List companies) {
-    List<DropdownMenuItem<ListaEmpresas>> items = List();
-    for (ListaEmpresas company in companies) {
+   
+  List<DropdownMenuItem<Company>> buildDropdownMenuItems(List companies) {
+    List<DropdownMenuItem<Company>> items = List();
+    for (Company company in companies) {
       items.add(
         DropdownMenuItem(
           value: company,
-          child: Text(company.empresasValores),
+          child: Text(company.name),
         ),
       );
     }
     return items;
   }
  
-  onChangeDropdownItem(ListaEmpresas selectedCompany) {
+  onChangeDropdownItem(Company selectedCompany) {
+    final prefs =  PreferenciasUsuario();
+    final userInfo = Provider.of<InformacionUsuario>(context);
+    final buscarUsuario = ServiciosLogin();
     setState(() {
       _selectedCompany = selectedCompany;
+     prefs.oidEmpresa= selectedCompany.valor;
+    buscarUsuario.tomarDatos();
+    buscarUsuario.listarCiudades().then((value) =>  userInfo.listaCiudades=value);
+     
     });
   }
  
   @override
   Widget build(BuildContext context) {
+    final userInfo = Provider.of<InformacionUsuario>(context);
+  
+    _dropdownMenuItems = buildDropdownMenuItems(userInfo.empresasValores);
     return new DropdownButtonFormField(
               value: _selectedCompany,
               items: _dropdownMenuItems,

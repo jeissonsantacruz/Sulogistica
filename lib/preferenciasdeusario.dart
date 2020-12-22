@@ -27,84 +27,94 @@ class PreferenciasUsuario {
   }
 
   // GET y SET del token
-  get order {
-    return _prefs.getString('order') ?? '';
+  get empresasValores {
+    return _prefs.getStringList('empresasValores') ?? '';
   }
 
-  set order(String value) {
-    _prefs.setString('order', value);
+  set empresasValores(List<String> value) {
+    _prefs.setStringList('empresasValores', value);
+  }
+  get empresasIndices {
+    return _prefs.getStringList('empresasIndices') ?? '';
   }
 
-  get token {
-    return _prefs.getString('token') ?? '';
+  set empresasIndices(List<String> value) {
+    _prefs.setStringList('empresasIndices', value);
   }
 
-  set token(String value) {
-    _prefs.setString('token', value);
-  }
+  get oidUsuario{
+    return _prefs.getString('oidUsuario' ?? '')
+  ;}
 
-  get tokenPhone {
-    return _prefs.getString('tokenPhone') ?? '';
-  }
+  set oidUsuario(String value){
+    _prefs.setString('oidUsuario', value);
 
-  set pts(String value) {
-    _prefs.setString('pts', value);
   }
+  
+   get oidCasa{
+    return _prefs.getString('oidCasa' ?? '')
+  ;}
 
-  get pts {
-    return _prefs.getString('pts') ?? '';
-  }
+  set oidCasa(String value){
+    _prefs.setString('oidCasa', value);
 
-  set tokenPhone(String value) {
-    _prefs.setString('tokenPhone', value);
   }
+  get idCasa{
+    return _prefs.getString('idCasa' ?? '')
+  ;}
 
-  get name {
-    return _prefs.getString('name') ?? '';
-  }
+  set idCasa(String value){
+    _prefs.setString('idCasa', value);
 
-  set name(String value) {
-    _prefs.setString('name', value);
   }
+   get oidEmpresa{
+    return _prefs.getString('oidEmpresa' ?? '')
+  ;}
 
-  set email(String value) {
-    _prefs.setString('email', value);
-  }
+  set oidEmpresa(String value){
+    _prefs.setString('oidEmpresa', value);
 
-  get email {
-    return _prefs.getString('email') ?? '';
   }
+   get idBase{
+    return _prefs.getString('idBase' ?? '')
+  ;}
 
-  // GET y SET de la última página
-  get ultimaPagina {
-    return _prefs.getString('ultimaPagina') ?? 'login';
-  }
+  set idBase(String value){
+    _prefs.setString('idBase', value);
 
-  set ultimaPagina(String value) {
-    _prefs.setString('ultimaPagina', value);
   }
+   get empresaTercero{
+    return _prefs.getString('empresaTercero' ?? '')
+  ;}
 
-  set id(String value) {
-    _prefs.setString('id', value);
-  }
+  set empresaTercero(String value){
+    _prefs.setString('empresaTercero', value);
 
-  get id {
-    return _prefs.getString('id') ?? '';
   }
+   get oidOficinaTercero{
+    return _prefs.getString('oidOficinaTercero' ?? '')
+  ;}
 
-  set direccion(String value) {
-    _prefs.setString('direccion', value);
-  }
+  set oidOficinaTercero(String value){
+    _prefs.setString('oidOficinaTercero', value);
 
-  get direccion {
-    return _prefs.getString('direccion') ?? '';
   }
+  get origenOfic{
+    return _prefs.getString('origenOfic' ?? '')
+  ;}
 
-  get payment {
-    return _prefs.getString('payment') ?? '';
-  }
+  set origenOfic(String value){
+    _prefs.setString('origenOfic', value);
 
-  set payment(String value) {
-    _prefs.setString('payment', value);
   }
+  get ciudad{
+    return _prefs.getString('ciudad' ?? '')
+  ;}
+
+  set ciudad(String value){
+    _prefs.setString('ciudad', value);
+
+  }
+  
+ 
 }

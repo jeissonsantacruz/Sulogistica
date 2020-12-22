@@ -1,15 +1,15 @@
 // To parse this JSON data, do
 //
-//     final listaEmpresas = listaEmpresasFromJson(jsonString);
+//     final usuarioInfo = usuarioInfoFromJson(jsonString);
 
 import 'dart:convert';
 
-ListaEmpresas listaEmpresasFromJson(String str) => ListaEmpresas.fromJson(json.decode(str));
+UsuarioInfo usuarioInfoFromJson(String str) => UsuarioInfo.fromJson(json.decode(str));
 
-String listaEmpresasToJson(ListaEmpresas data) => json.encode(data.toJson());
+String usuarioInfoToJson(UsuarioInfo data) => json.encode(data.toJson());
 
-class ListaEmpresas {
-    ListaEmpresas({
+class UsuarioInfo {
+    UsuarioInfo({
         this.oidUsuario,
         this.oidtuasuario,
         this.idEmpresa,
@@ -39,7 +39,7 @@ class ListaEmpresas {
     List<String> casasIndices;
     List<String> casasValores;
 
-    factory ListaEmpresas.fromJson(Map<String, dynamic> json) => ListaEmpresas(
+    factory UsuarioInfo.fromJson(Map<String, dynamic> json) => UsuarioInfo(
         oidUsuario: json["oidUsuario"],
         oidtuasuario: json["oidtuasuario"],
         idEmpresa: json["idEmpresa"],
