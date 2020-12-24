@@ -13,6 +13,8 @@ class InformacionUsuario with ChangeNotifier {
   List<dynamic> _listaSecciones = [Secciones('0', 'elegir')];
  String _ciudad ='Ciudad';
  String _empresa ='Empresa';
+ String _oficina ='Oficina';
+ String _seccion = 'Sección';
 
   //Getters & SETTERS
   get empresasValores {
@@ -64,6 +66,22 @@ class InformacionUsuario with ChangeNotifier {
 
   set empresa(String empresas) {
     this._empresa = empresas;
+    notifyListeners();
+  }
+   get seccion {
+    return _seccion;
+  }
+
+  set seccion(String seccion) {
+    this._seccion = seccion;
+    notifyListeners();
+  }
+   get oficina {
+    return _oficina;
+  }
+
+  set oficina(String oficina) {
+    this._oficina = oficina;
     notifyListeners();
   }
 

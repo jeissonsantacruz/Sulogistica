@@ -5,6 +5,7 @@ import 'package:sulogistica/aplicacion/provider/providerUsuario_prrovider.dart';
 import 'package:sulogistica/preferenciasdeusario.dart';
 
 
+import 'aplicacion/paginas/loginUsuario2_page.dart';
 import 'aplicacion/paginas/loginUsuario_page.dart';
 
 
@@ -37,10 +38,11 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        initialRoute: 'login',
+        initialRoute: _route(),
         navigatorKey: navigatorKey,
         routes: {
           'login': (context) => LoginPagina(),
+          'loginUsuario2': (context) => LoginPagina2(),
         },
       )
     );
@@ -50,26 +52,17 @@ class _MyAppState extends State<MyApp> {
     This function return the route to navigate
     after phone starts 
   */
-  // _route<String>() {
-  //   final userPreferences = new PreferenciasUsuario();
-  //   // Routes Switch
-  //   if (userPreferences.token != '') {
-  //     var route = 'services';
-  //     //Check in the server if has an order in progress
-  //     userService.checkUserOrder()
-  //       .then((response) {
-  //         if (response['content'] == 1) {
-  //           route = 'services';
-  //           userPreferences.order = 0.toString();
-  //         } else {
-  //           route = 'orderProccess';
-  //         }
-  //       });
-  //     return route;
-  //   } else {
-  //     return 'login';
-  //   }
-  // }
+  _route<String>() {
+    final userPreferences = new PreferenciasUsuario();
+    // Routes Switch
+    if (userPreferences.logeado) {
+      var route = 'loginUsuario2';
+      //Check in the server if has an order in progress
+      return route;
+    } else {
+      return 'login';
+    }
+  }
 
   /*
     This function checks if the current enviroment is development or production

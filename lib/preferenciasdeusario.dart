@@ -150,14 +150,17 @@ class PreferenciasUsuario {
     _prefs.setString('idSeccion', value);
 
   }
-  get ciudad{
-    return _prefs.getString('ciudad' ?? '')
+   get logeado{
+    return _prefs.getString('logeado' ?? false)
   ;}
 
-  set ciudad(String value){
-    _prefs.setString('ciudad', value);
+  set logeado(bool value){
+    _prefs.setBool('logeado', value);
 
   }
+  
+
+ 
   
  
 }
