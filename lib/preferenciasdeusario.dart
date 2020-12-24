@@ -27,7 +27,49 @@ class PreferenciasUsuario {
   }
 
   // GET y SET del token
-  get empresasValores {
+  get ciudadesValores {
+    return _prefs.getStringList('ciudadesValores') ?? '';
+  }
+
+  set ciudadesValores(List<String> value) {
+    _prefs.setStringList('ciudadesValores', value);
+  }
+  get ciuadadesIndices {
+    return _prefs.getStringList('ciuadadesIndices') ?? '';
+  }
+
+  set ciuadadesIndices(List<String> value) {
+    _prefs.setStringList('ciuadadesIndices', value);
+  }
+  get seccionesValores {
+    return _prefs.getStringList('seccionesValores') ?? '';
+  }
+
+  set seccionesValores(List<String> value) {
+    _prefs.setStringList('seccionesValores', value);
+  }
+  get seccionesIndices {
+    return _prefs.getStringList('seccionesIndices') ?? '';
+  }
+
+  set seccionesIndices(List<String> value) {
+    _prefs.setStringList('seccionesIndices', value);
+  }
+   get oficinasValores {
+    return _prefs.getStringList('oficinasValores') ?? '';
+  }
+
+  set oficinasValores(List<String> value) {
+    _prefs.setStringList('oficinasValores', value);
+  }
+  get oficinasIndices {
+    return _prefs.getStringList('oficinasIndices') ?? '';
+  }
+
+  set oficinasIndices(List<String> value) {
+    _prefs.setStringList('oficinasIndices', value);
+  }
+   get empresasValores {
     return _prefs.getStringList('empresasValores') ?? '';
   }
 
@@ -42,6 +84,7 @@ class PreferenciasUsuario {
     _prefs.setStringList('empresasIndices', value);
   }
 
+  
   get oidUsuario{
     return _prefs.getString('oidUsuario' ?? '')
   ;}
@@ -99,12 +142,12 @@ class PreferenciasUsuario {
     _prefs.setString('oidOficinaTercero', value);
 
   }
-  get origenOfic{
-    return _prefs.getString('origenOfic' ?? '')
+  get idSeccion{
+    return _prefs.getString('idSeccion' ?? '')
   ;}
 
-  set origenOfic(String value){
-    _prefs.setString('origenOfic', value);
+  set idSeccion(String value){
+    _prefs.setString('idSeccion', value);
 
   }
   get ciudad{
