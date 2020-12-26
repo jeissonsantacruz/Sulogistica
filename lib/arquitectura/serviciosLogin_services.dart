@@ -8,7 +8,6 @@ import 'package:sulogistica/preferenciasdeusario.dart';
 
 final String urlBase = 'http://190.121.138.85/';
 
-
 class ServiciosLogin {
   final String url = urlBase + 'funcionesLogin.php';
   final prefs = PreferenciasUsuario();
@@ -31,27 +30,24 @@ class ServiciosLogin {
     prefs.empresasValores = _resultadoValores;
     prefs.empresasIndices = _resultadoIndices;
     if (decodeData['cuantasEmpresas'] == 1) {
-
       prefs.idCasa = decodeData['idCasa'];
       prefs.oidCasa = decodeData['oidCasa'];
       prefs.oidUsuario = decodeData['oidUsuario'];
       prefs.oidEmpresa = decodeData['idEmpresa'];
       print(decodeData);
       return 1;
-      
     }
-    
+
     return 0;
-    
   }
 
   Future<Map<dynamic, dynamic>> tomarDatos() async {
     var data = {
-    "funcionphp": 'tomarDatos',
-      "idCasa":"800157847,38190",
+      "funcionphp": 'tomarDatos',
+      "idCasa": "800157847,38190",
       "idEmpresa": "38190",
-      "idUsuario":"66778",
-      "origen" :0
+      "idUsuario": "66778",
+      "origen": 0
     };
     var dio = Dio();
     final encodedData = FormData.fromMap(data);
@@ -63,7 +59,7 @@ class ServiciosLogin {
     prefs.empresaTercero = decodeData['oidEmpresaTercero'];
     prefs.idSeccion = decodeData['oidSeccion'];
     prefs.oidOficinaTercero = decodeData['oidOficinaTercero'];
-print(decodeData);
+    print(decodeData);
     return decodeData;
   }
 
@@ -90,18 +86,18 @@ print(decodeData);
     prefs.ciudadesValores = _resultadoValores;
     prefs.ciuadadesIndices = _resultadoIndices;
 
-    
     return _ciudades;
   }
-   final String urlOficinas = urlBase + 'controladores/funcionesOficinas.php';
+
+  final String urlOficinas = urlBase + 'controladores/funcionesOficinas.php';
   List<Oficinas> _oficinas = new List();
   Future<List<Oficinas>> listarOficinas() async {
     var data = {
       "funcionphp": 'listarOficinas',
       "oidEmpresa": prefs.empresaTercero,
       "idCiudad": prefs.idBase,
-      "idOficina":prefs.oidOficinaTercero,
-      "tipoRetorno":2
+      "idOficina": prefs.oidOficinaTercero,
+      "tipoRetorno": 2
     };
     var dio = Dio();
     final encodedData = FormData.fromMap(data);
@@ -118,17 +114,16 @@ print(decodeData);
     prefs.oficinasValores = _resultadoValores;
     prefs.oficinasIndices = _resultadoIndices;
 
-    
     return _oficinas;
   }
 
-   final String urlSecciones = urlBase + 'funcionesLogin.php';
-  
+  final String urlSecciones = urlBase + 'funcionesLogin.php';
+
   Future<List<Oficinas>> listarSecciones() async {
     var data = {
       "funcionphp": 'listarSecciones',
-      "oidOficina":prefs.oidOficinaTercero,
-      "idSeccion":prefs.idSeccion
+      "oidOficina": prefs.oidOficinaTercero,
+      "idSeccion": prefs.idSeccion
     };
     var dio = Dio();
     final encodedData = FormData.fromMap(data);
@@ -144,8 +139,40 @@ print(decodeData);
 
     prefs.seccionesValores = _resultadoValores;
     prefs.seccionesIndices = _resultadoIndices;
-    
-    
+
     return _oficinas;
+  }
+
+  final String urlLogin = urlBase + 'funcionesLogin.php';
+
+  Future<Map<dynamic,dynamic>> iniciarSesion(
+      String usuario,
+      String clave,
+      String cmbCasa,
+      String cmbEmpresa,
+      String cmbCiudad,
+      String cmbOficina,
+      String cmbSeccion) async {
+
+    var data = {
+      "funcionphp": 'iniciarSesion',
+      "datosForm": {
+        "usuario": usuario,
+        "clave": clave,
+        "cmbCasa": cmbCasa,
+        "cmbEmpresa": cmbEmpresa,
+        "cmbCiudad": cmbCiudad,
+        "cmbOficina": cmbOficina,
+        "cmbSeccion": cmbSeccion
+      }
+    };
+    var dio = Dio();
+    final encodedData = FormData.fromMap(data);
+    // make POST request
+    Response response = await dio.post(urlLogin, data: encodedData);
+    final decodeData = jsonDecode(response.data);
+
+  
+    return decodeData;
   }
 }

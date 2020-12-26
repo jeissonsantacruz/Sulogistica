@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:sulogistica/aplicacion/provider/providerUsuario_prrovider.dart';
 import 'package:sulogistica/aplicacion/widgets/recuperContrasena_widget.dart';
+import 'package:sulogistica/arquitectura/serviciosLogin_services.dart';
 import 'package:sulogistica/dominio/modeloCiudades_model.dart';
 import 'package:sulogistica/dominio/modeloEmpresas_model.dart';
 import 'package:sulogistica/dominio/modeloOficinas_model.dart';
@@ -18,18 +21,31 @@ class LoginPagina extends StatefulWidget {
 }
 
 class _LoginPaginaState extends State<LoginPagina> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
+  final spinkit = SpinKitFadingCircle(
+    itemBuilder: (BuildContext context, int index) {
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          color: index.isEven ? Colors.red : Color(0xFF0A2140),
+        ),
+      );
+    },
+  );
   TextEditingController codigoController = new TextEditingController();
   TextEditingController contraController = new TextEditingController();
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
     final userInfo = Provider.of<InformacionUsuario>(context);
     final size = MediaQuery.of(context).size;
+    if (prefs.empresa != null) {
+      userInfo.empresa = prefs.empresa;
+      codigoController.text = prefs.codigo;
+      userInfo.ciudad = prefs.ciudad;
+      userInfo.oficina = prefs.oficina;
+      userInfo.seccion = prefs.seccion;
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -45,147 +61,178 @@ class _LoginPaginaState extends State<LoginPagina> {
               ),
               //======================================================== State
               TextFormField(
-                cursorColor: Colors.black,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Código',
-                    fillColor: Colors.white,
-                    labelStyle: new TextStyle(color: Colors.white)),
-                controller: codigoController,
-                onEditingComplete: buscarUsuario,
-              ),
+                  cursorColor: Colors.black,
+                  decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Colors.blue,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Colors.black,
+                          width: 1.0,
+                        ),
+                      ),
+                      hintText: 'Código',
+                      labelStyle: new TextStyle(color: Colors.white)),
+                  controller: codigoController,
+                  onEditingComplete: () {
+                    prefs.codigo = codigoController.text;
+                    setState(() => loading = true);
+                    buscarUsuario();
+                  }),
               SizedBox(height: 10),
-              Container(
-                padding: EdgeInsets.only(top: 5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: Colors.white,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Expanded(
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          elevation: 0,
-                          focusColor: Colors.greenAccent,
-                          value: _myState,
-                          style: TextStyle(
-                              color: const Color(0xFF0A2140), fontSize: 16),
-                          hint: Text(
-                            '${userInfo.empresa}',
-                            style: TextStyle(color: Color(0xFF0A2140)),
-                          ),
-                          onChanged: (String newValue) {
-                            setState(() {
-                              _myState = newValue;
-                              print(_myState);
+              loading
+                  ? spinkit
+                  : Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.only(top: 5, left: 15),
+                          decoration: BoxDecoration(
+                              border: Border.all(),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Expanded(
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    elevation: 0,
+                                    focusColor: Colors.greenAccent,
+                                    value: _myState,
+                                    style: TextStyle(
+                                        color: const Color(0xFF0A2140),
+                                        fontSize: 16),
+                                    hint: Text(
+                                      '${userInfo.empresa}',
+                                      style:
+                                          TextStyle(color: Color(0xFF0A2140)),
+                                    ),
+                                    onChanged: (String newValue) {
+                                      setState(() {
+                                        _myState = newValue;
+                                        prefs.empresa = userInfo.empresa;
+                                        print(_myState);
+                                        setState(() => loading = true);
+                                        tomarDatos(
+                                            prefs.idCasa + ',' + prefs.oidCasa);
 
-                              tomarDatos(prefs.idCasa + ',' + prefs.oidCasa);
-                              listarCiudades().whenComplete(() {
-                                listarOficinas().whenComplete(() {
-                                  listarSecciones();
-                                });
-                              });
-                            });
-                          },
-                          items: statesList?.map((item) {
-                                return new DropdownMenuItem(
-                                  child: new Text(item.name),
-                                  value: item.valor.toString(),
-                                );
-                              })?.toList() ??
-                              [],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              //======================================================== City
-              SizedBox(height: 30),
-              Container(
-                padding: EdgeInsets.only(top: 5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: Colors.white,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Expanded(
-                      child: DropdownButtonHideUnderline(
-                        child: ButtonTheme(
-                          child: DropdownButton<String>(
-                            value: _myCity,
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16,
-                            ),
-                            hint: Text(
-                              '${userInfo.ciudad}',
-                              style: TextStyle(color: Color(0xFF0A2140)),
-                            ),
-                            onChanged: (String newValue) {
-                              setState(() {
-                                _myCity = newValue;
-                                print(_myCity);
-                                listarOficinas();
-                                listarSecciones();
-                              });
-                            },
-                            items: citiesList?.map((item) {
-                                  return new DropdownMenuItem(
-                                    child: new Text(item.name),
-                                    value: item.valor.toString(),
-                                  );
-                                })?.toList() ??
-                                [],
+                                        listarCiudades().whenComplete(() {
+                                          listarSecciones();
+                                        });
+                                      });
+                                    },
+                                    items: statesList?.map((item) {
+                                          return new DropdownMenuItem(
+                                            child: new Text(item.name),
+                                            value: item.valor.toString(),
+                                          );
+                                        })?.toList() ??
+                                        [],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                 padding: EdgeInsets.only(top: 5),
-                  color: Colors.white,
-                  child: DropdownButtonHideUnderline(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxHeight: 48.0),
-                      child: DropdownButton<String>(
-                        isExpanded: true,
-                        value: _myOficina,
-                        style: TextStyle(
-                          color: Color(0xFF0A2140),
-                          fontSize: 16,
+
+                        //======================================================== City
+                        SizedBox(height: 30),
+                        Container(
+                          padding: EdgeInsets.only(top: 5, left: 15),
+                          decoration: BoxDecoration(
+                              border: Border.all(),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Expanded(
+                                child: DropdownButtonHideUnderline(
+                                  child: ButtonTheme(
+                                    child: DropdownButton<String>(
+                                      value: _myCity,
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 16,
+                                      ),
+                                      hint: Text(
+                                        '${userInfo.ciudad}',
+                                        style:
+                                            TextStyle(color: Color(0xFF0A2140)),
+                                      ),
+                                      onChanged: (String newValue) {
+                                        setState(() {
+                                          _myCity = newValue;
+                                          print(_myCity);
+                                          listarOficinas();
+                                          listarSecciones();
+                                        });
+                                      },
+                                      items: citiesList?.map((item) {
+                                            return new DropdownMenuItem(
+                                              child: new Text(item.name),
+                                              value: item.valor.toString(),
+                                            );
+                                          })?.toList() ??
+                                          [],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        hint: Text(
-                          '${userInfo.oficina}',
-                          style: TextStyle(color: Color(0xFF0A2140)),
+                        SizedBox(height: 10),
+                        Container(
+                            padding: EdgeInsets.only(top: 5, left: 15),
+                            decoration: BoxDecoration(
+                                border: Border.all(),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: DropdownButtonHideUnderline(
+                              child: ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxHeight: 48.0),
+                                child: DropdownButton<String>(
+                                  isExpanded: true,
+                                  value: _myOficina,
+                                  style: TextStyle(
+                                    color: Color(0xFF0A2140),
+                                    fontSize: 16,
+                                  ),
+                                  hint: Text(
+                                    '${userInfo.oficina}',
+                                    style: TextStyle(color: Color(0xFF0A2140)),
+                                  ),
+                                  onChanged: (String newValue) {
+                                    setState(() {
+                                      _myOficina = newValue;
+                                      print(_myOficina);
+                                      listarSecciones();
+                                    });
+                                  },
+                                  items: oficinaList?.map((item) {
+                                        return new DropdownMenuItem(
+                                          child: new Text(item.name),
+                                          value: item.valor.toString(),
+                                        );
+                                      })?.toList() ??
+                                      [],
+                                ),
+                              ),
+                            )),
+                        SizedBox(
+                          height: 10,
                         ),
-                        onChanged: (String newValue) {
-                          setState(() {
-                            _myOficina = newValue;
-                            print(_myOficina);
-                            listarSecciones();
-                          });
-                        },
-                        items: oficinaList?.map((item) {
-                              return new DropdownMenuItem(
-                                child: new Text(item.name),
-                                value: item.valor.toString(),
-                              );
-                            })?.toList() ??
-                            [],
-                      ),
+                      ],
                     ),
-                  )),
               Container(
-               padding: EdgeInsets.only(top: 5),
-                color: Colors.white,
+                decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(10)),
+                padding: EdgeInsets.only(top: 5, left: 15),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -230,9 +277,8 @@ class _LoginPaginaState extends State<LoginPagina> {
                   TextField(
                     decoration: InputDecoration(
                         labelText: 'Contraseña',
-                        
-                        labelStyle:
-                            new TextStyle(color: const Color(0xFF0A2140),fontSize: 16)),
+                        labelStyle: new TextStyle(
+                            color: const Color(0xFF0A2140), fontSize: 16)),
                     controller: contraController,
                   ),
                   SizedBox(
@@ -260,6 +306,7 @@ class _LoginPaginaState extends State<LoginPagina> {
                   padding: EdgeInsets.only(
                       bottom: size.height * 0.04, left: 30, right: 30, top: 15),
                   child: RaisedButton(
+                      
                       elevation: 5.0,
                       shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(20.0),
@@ -287,10 +334,33 @@ class _LoginPaginaState extends State<LoginPagina> {
                                       fontWeight: FontWeight.w600))),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed:() {
+                        final serviciosLogin = ServiciosLogin();
 
-                        prefs.logeado = true;
-                      })),
+                        if( prefs.ciudad!= null){
+                        var res = serviciosLogin.iniciarSesion(
+                            codigoController.text,
+                            contraController.text,
+                            prefs.idCasa + ',' + prefs.oidCasa,
+                            _myState,
+                            prefs.idBase,
+                            prefs.oidOficinaTercero,
+                            prefs.idSeccion);
+                        
+                        res.then((respuesta) {
+                          if(respuesta['msgError']!= ''){
+                            _onAlertButtonsPressed(context,respuesta['msgError'],"Usuario no válido");
+
+                          }else{
+                              prefs.logeado = true;
+                          }
+                            
+                        });
+
+                        }else{ _onAlertButtonsPressed(context,'Por favor seleccione todos los campos!','Información incompleta');}
+                      
+                      },
+)),
             ],
           ),
         ),
@@ -307,6 +377,25 @@ class _LoginPaginaState extends State<LoginPagina> {
             image: AssetImage('assets/images/suweb.png'),
           ),
         ));
+  }
+
+  _onAlertButtonsPressed(context, String msg, String titulo) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: titulo,
+      desc: msg,
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Entendido",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.orange,
+        ),
+      ],
+    ).show();
   }
 
   //=============================================================================== Api Calling here
@@ -353,20 +442,20 @@ class _LoginPaginaState extends State<LoginPagina> {
       setState(() {
         List<Company> _resultado = [];
         _myState = prefs.empresasIndices[0];
-        statesList = _llenarCompa(prefs.empresasValores, prefs.empresasIndices,
-            null, _resultado, 'empresas');
+        statesList = _llenarCompa(
+            _resultadoValores, _resultadoIndices, null, _resultado, 'empresas');
         tomarDatos(prefs.oidCasa);
+
         listarCiudades().whenComplete(() {
-          listarOficinas().whenComplete(() {
-            listarSecciones();
-          });
+          listarSecciones();
         });
+        // listarOficinas();
       });
 
       return 1;
     }
     List<Company> _resultado = [];
-
+    setState(() => loading = false);
     setState(() {
       statesList = _llenarCompa(prefs.empresasValores, prefs.empresasIndices,
           null, _resultado, 'empresas');
@@ -460,7 +549,7 @@ class _LoginPaginaState extends State<LoginPagina> {
     setState(() {
       List<Company> _resultado = [];
 
-      oficinaList = _llenarCompa(prefs.oficinasValores, prefs.oficinasIndices,
+      oficinaList = _llenarCompa(_resultadoValores, _resultadoIndices,
           prefs.oidOficinaTercero, _resultado, 'oficina');
     });
   }
@@ -491,14 +580,10 @@ class _LoginPaginaState extends State<LoginPagina> {
     setState(() {
       List<Company> _resultado = [];
 
-      seccionesList = _llenarCompa(
-          prefs.seccionesIndices,
-          prefs.seccionesValores,
-          prefs.idSeccion + ',' + prefs.idSeccion,
-          _resultado,
-          'seccion');
+      seccionesList = _llenarCompa(_resultadoIndices, _resultadoValores,
+          prefs.idSeccion + ',' + prefs.idSeccion, _resultado, 'seccion');
     });
-
+    setState(() => loading = false);
     return _oficinas;
   }
 
@@ -519,24 +604,28 @@ class _LoginPaginaState extends State<LoginPagina> {
             case 'ciudad':
               {
                 userInfo.ciudad = item.name;
+                prefs.ciudad = item.name;
                 break;
               }
             case 'oficina':
               {
                 userInfo.oficina = item.name;
-
+                prefs.oficina = item.name;
                 break;
               }
             case 'seccion':
               {
                 userInfo.seccion = item.name;
+                prefs.seccion = item.name;
               }
           }
-          print(_resultado);
+
           return _resultado.toSet().toList();
         }
       }
     } else {
+      userInfo.empresa = prefValores[0];
+      prefs.empresa = userInfo.empresa;
       return _resultado;
     }
     return _resultado;

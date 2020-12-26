@@ -29,6 +29,8 @@ dependencies:
   webview_flutter: ^1.0.7
   http:
   dio: ^3.0.10
+  flutter_spinkit: "^4.1.2"
+  rflutter_alert: ^1.1.0
 
 
   # The following adds the Cupertino Icons font to your application.

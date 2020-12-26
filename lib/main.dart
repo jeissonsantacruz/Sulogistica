@@ -55,7 +55,7 @@ class _MyAppState extends State<MyApp> {
   _route<String>() {
     final userPreferences = new PreferenciasUsuario();
     // Routes Switch
-    if (userPreferences.logeado) {
+    if (userPreferences.logeado == true) {
       var route = 'loginUsuario2';
       //Check in the server if has an order in progress
       return route;

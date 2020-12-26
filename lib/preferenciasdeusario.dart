@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
     
     Recuerden que el main() debe de ser async {...
 */
-
+ 
 class PreferenciasUsuario {
   static final PreferenciasUsuario _instancia =
       new PreferenciasUsuario._internal();
@@ -142,6 +142,23 @@ class PreferenciasUsuario {
     _prefs.setString('oidOficinaTercero', value);
 
   }
+  get ciudad{
+    return _prefs.getString('ciudad' ?? '')
+  ;}
+
+  set ciudad(String value){
+    _prefs.setString('ciudad', value);
+
+  }
+   get logeado{
+    return _prefs.getBool('logeado' ?? '')
+  ;}
+
+  set logeado(bool value){
+    _prefs.setBool('logeado', value);
+
+  }
+  
   get idSeccion{
     return _prefs.getString('idSeccion' ?? '')
   ;}
@@ -150,15 +167,38 @@ class PreferenciasUsuario {
     _prefs.setString('idSeccion', value);
 
   }
-   get logeado{
-    return _prefs.getString('logeado' ?? false)
+  get seccion{
+    return _prefs.getString('seccion' ?? '')
   ;}
 
-  set logeado(bool value){
-    _prefs.setBool('logeado', value);
+  set seccion(String value){
+    _prefs.setString('seccion', value);
 
   }
-  
+  get empresa{
+    return _prefs.getString('empresa' ?? '')
+  ;}
+
+  set empresa(String value){
+    _prefs.setString('empresa', value);
+
+  }
+  get oficina{
+    return _prefs.getString('oficina' ?? '')
+  ;}
+
+  set oficina(String value){
+    _prefs.setString('oficina', value);
+
+  }
+  get codigo{
+    return _prefs.getString('codigo' ?? '')
+  ;}
+
+  set codigo(String value){
+    _prefs.setString('codigo', value);
+
+  }
 
  
   
