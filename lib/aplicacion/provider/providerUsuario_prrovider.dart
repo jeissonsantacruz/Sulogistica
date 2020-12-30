@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:sulogistica/dominio/modeloCiudades_model.dart';
-import 'package:sulogistica/dominio/modeloEmpresas_model.dart';
-import 'package:sulogistica/dominio/modeloOficinas_model.dart';
-import 'package:sulogistica/dominio/modeloSecciones_model.dart';
+import 'package:sulogistica/dominio/modeloRespuesta_model.dart';
 
 
+ // Patron provider que actuliza en tiempo real los valores en los widgets
 class InformacionUsuario with ChangeNotifier {
   // Properties
-  List<dynamic> _empresasValores = [Company('0', 'elegir')];
-  List<dynamic> _listaCiudades = [Ciudades('0', 'elegir')];
-  List<dynamic> _listaOficinas = [Oficinas('0', 'elegir')];
-  List<dynamic> _listaSecciones = [Secciones('0', 'elegir')];
+  List<dynamic> _empresasValores = [ListaRespuesta('0', 'elegir')];
+ 
  String _ciudad ='Ciudad';
  String _empresa ='Empresa';
  String _oficina ='Oficina';
@@ -21,37 +17,11 @@ class InformacionUsuario with ChangeNotifier {
     return _empresasValores;
   }
 
-  set empresasValores(List<Company> empresas) {
+  set empresasValores(List<ListaRespuesta> empresas) {
     this._empresasValores = empresas;
     notifyListeners();
   }
 
-  get listaCiudades {
-    return _listaCiudades;
-  }
-
-  set listaCiudades(List<Ciudades> empresas) {
-    this._listaCiudades = empresas;
-    notifyListeners();
-  }
-
-  get listaOficinas {
-    return _listaOficinas;
-  }
-
-  set listaOficinas(List<Oficinas> empresas) {
-    this._listaOficinas = empresas;
-    notifyListeners();
-  }
-
-  get listaSecciones {
-    return _listaSecciones;
-  }
-
-  set listaSecciones(List<Secciones> empresas) {
-    this._listaSecciones = empresas;
-    notifyListeners();
-  }
    get ciudad {
     return _ciudad;
   }

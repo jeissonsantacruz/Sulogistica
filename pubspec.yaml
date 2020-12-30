@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   shared_preferences:
+  pdf_flutter: ^1.1.3
   provider: ^2.0.1
   font_awesome_flutter:
   webview_flutter: ^1.0.7

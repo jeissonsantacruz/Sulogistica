@@ -199,6 +199,22 @@ class PreferenciasUsuario {
     _prefs.setString('codigo', value);
 
   }
+  get seccionTercero{
+    return _prefs.getString('seccionTercero' ?? '')
+  ;}
+
+  set seccionTercero(String value){
+    _prefs.setString('seccionTercero', value);
+
+  }
+   get oficinaOrigen{
+    return _prefs.getString('oficinaOrigen' ?? '')
+  ;}
+
+  set oficinaOrigen(String value){
+    _prefs.setString('oficinaOrigen', value);
+
+  }
 
  
   

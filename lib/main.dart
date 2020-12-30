@@ -5,7 +5,7 @@ import 'package:sulogistica/aplicacion/provider/providerUsuario_prrovider.dart';
 import 'package:sulogistica/preferenciasdeusario.dart';
 
 
-import 'aplicacion/paginas/loginUsuario2_page.dart';
+import 'aplicacion/paginas/homeUsuario.dart';
 import 'aplicacion/paginas/loginUsuario_page.dart';
 
 
@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
         navigatorKey: navigatorKey,
         routes: {
           'login': (context) => LoginPagina(),
-          'loginUsuario2': (context) => LoginPagina2(),
+          'homeUsuario': (context) => HomeUsuario(),
         },
       )
     );
@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
     final userPreferences = new PreferenciasUsuario();
     // Routes Switch
     if (userPreferences.logeado == true) {
-      var route = 'loginUsuario2';
+      var route = 'homeUsuario';
       //Check in the server if has an order in progress
       return route;
     } else {
