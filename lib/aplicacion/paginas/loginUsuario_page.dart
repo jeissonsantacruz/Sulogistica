@@ -47,7 +47,7 @@ class _LoginPaginaState extends State<LoginPagina> {
       codigoController.text = prefs.codigo;
       userInfo.ciudad = prefs.ciudad;
       userInfo.oficina = prefs.oficina;
-      userInfo.seccion = prefs.seccion;
+      userInfo.seccion = prefs.seccion;     
     }
 
     return Scaffold(
@@ -446,10 +446,10 @@ class _LoginPaginaState extends State<LoginPagina> {
 
 
 // Listas de respuesta de cada POST
-  List<ListaRespuesta> empresasList = [];
-  List<ListaRespuesta>  oficinaList =[];
-  List<ListaRespuesta>  seccionesList=[];
-  List<ListaRespuesta>  citiesList=[];
+  List<dynamic> empresasList = [];
+  List<dynamic>  oficinaList =[];
+  List<dynamic>  seccionesList=[];
+  List<dynamic>  citiesList=[];
   // Valores selecionados del usuario
   String _mySeccion;
   String _myOficina;
@@ -488,7 +488,7 @@ class _LoginPaginaState extends State<LoginPagina> {
       print(decodeData);
 
       setState(() {
-        List<ListaRespuesta> _resultado = [ListaRespuesta('0', 'elegir')];
+        List<ListaRespuesta> _resultado = [];
         _myEmpresa = prefs.empresasIndices[0];
         empresasList = _llenarCompa(
             _resultadoValores, _resultadoIndices, null, _resultado, 'empresas');
@@ -528,6 +528,9 @@ class _LoginPaginaState extends State<LoginPagina> {
     final decodeData = jsonDecode(response.data);
 
     prefs.idBase = decodeData['baseTercero'];
+    setState(() {
+      _myCiudad=decodeData['baseTercero'];
+    });
     prefs.empresaTercero = decodeData['empresaTercero'];
     prefs.idSeccion = decodeData['oidSeccion'];
     prefs.seccionTercero = decodeData['seccionTercero'];
@@ -544,7 +547,7 @@ class _LoginPaginaState extends State<LoginPagina> {
     var data = {
       "funcionphp": 'listarCiudades',
       "idEmpresa": prefs.empresaTercero,
-      "idBase": prefs.idBase,
+      "idBase": _myCiudad,
     };
     var dio = Dio();
     final encodedData = FormData.fromMap(data);
@@ -563,7 +566,7 @@ class _LoginPaginaState extends State<LoginPagina> {
       prefs.ciuadadesIndices = _resultadoIndices;
       
       setState(() {
-        List<ListaRespuesta> _resultado = [ListaRespuesta('0', 'elegir')];
+         List<ListaRespuesta> _resultado = [];
       
         citiesList = _llenarCompa(prefs.ciuadadesIndices, prefs.ciudadesValores,
             prefs.idBase, _resultado, 'ciudad');
@@ -580,7 +583,7 @@ class _LoginPaginaState extends State<LoginPagina> {
     var data = {
       "funcionphp": 'listarOficinas',
       "oidEmpresa": prefs.oficinaOrigen,
-      "idCiudad": prefs.idBase,
+      "idCiudad": _myCiudad,
       "idOficina": prefs.oidOficinaTercero,
       "tipoRetorno": 2
     };
@@ -599,7 +602,7 @@ class _LoginPaginaState extends State<LoginPagina> {
     prefs.oficinasValores = _resultadoValores;
     prefs.oficinasIndices = _resultadoIndices;
     setState(() {
-      List<ListaRespuesta> _resultado = [ListaRespuesta('0', 'elegir')];
+       List<ListaRespuesta> _resultado = [];
 
       oficinaList = _llenarCompa(_resultadoValores, _resultadoIndices,
           prefs.oidOficinaTercero, _resultado, 'oficina');
@@ -634,7 +637,7 @@ class _LoginPaginaState extends State<LoginPagina> {
       prefs.seccionesIndices = _resultadoIndices;
       
       setState(() {
-        List<ListaRespuesta> _resultado = [ListaRespuesta('', 'elegir')];
+         List<ListaRespuesta> _resultado = [];
       
         seccionesList = _llenarCompa(_resultadoIndices, _resultadoValores,
             decodeData["seccionElecta"].toString(), _resultado, 'seccion');
@@ -664,7 +667,7 @@ class _LoginPaginaState extends State<LoginPagina> {
             case 'ciudad':
               {
                 userInfo.ciudad = item.name;
-                // prefs.ciudad = item.name;
+                prefs.ciudad = item.name;
                 break;
               }
             case 'oficina':
@@ -676,7 +679,7 @@ class _LoginPaginaState extends State<LoginPagina> {
             case 'seccion':
               {
                 userInfo.seccion = item.name;
-                // prefs.seccion = item.name;
+               prefs.seccion = item.name;
               }
           }
           print('entre' + ':' + item.name);
