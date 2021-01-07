@@ -28,7 +28,7 @@ class _LoginPaginaState extends State<LoginPagina> {
     itemBuilder: (BuildContext context, int index) {
       return DecoratedBox(
         decoration: BoxDecoration(
-            color: index.isEven ? Color(0xFFC11C36) : Color(0xFF0A2140)),
+            color: index.isEven ? Color(0xFFC11C36) : Color(0xFF  )),
       );
     },
   );
